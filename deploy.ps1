@@ -13,7 +13,7 @@ $ErrorActionPreference = "Stop"
 
 $SecondsRunning = 0
 Write-Host "Press any key to start the script" -ForegroundColor Blue
-while (-not ($Host.UI.RawUI.KeyAvailable) -and ($SecondsRunning -lt 60)) {
+while (-not ($Host.UI.RawUI.KeyAvailable) -and ($SecondsRunning -lt 65)) {
     Start-Sleep 1
     $SecondsRunning++
 }
@@ -76,39 +76,47 @@ Write-Host "Computer name - OK: $newComputerName" -ForegroundColor Green
 #Send request to DC
 Invoke-RestMethod -Uri ("https://pu.bpskozep.hu/deployment/delete/" + $newComputerName) -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
 
-""
-"--- Step 5: Download and install Tailscale ---"
-""
-
-$workdir = "C:\Windows\Temp"
-
-$TSDownloadUrl = "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi"
-$TSDownloadPath = "$workdir\tailscale-setup-latest.msi"
-Invoke-WebRequest -Uri $TSDownloadUrl -OutFile $TSDownloadPath
-
-if (-not (Test-Path $TSDownloadPath)) {
-    Write-Host "Downloading TS - Failed" -ForegroundColor Red
-    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
-    exit
-}
-
-Write-Host "Downloading TS - OK" -ForegroundColor Green
-
-Start-Process -FilePath "$workdir\tailscale-setup-latest.msi" -ArgumentList "-q" -Wait
-
-Start-Sleep 15
-
-# Try statement to check if TS is really installed
 try {
     (Get-Command "C:\Program Files\Tailscale\tailscale.exe" -ErrorAction Stop) *>$null
-    Write-Host "Installing TS - OK" -ForegroundColor Green
+    Write-Host "Installing TS - Already installed, skipping" -ForegroundColor Blue
 }
 catch {
-    Write-Host "Installing TS - Failed" -ForegroundColor Red
-    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
-    exit
+
+    ""
+    "--- Step 5: Download and install Tailscale ---"
+    ""
+
+    $workdir = "C:\Windows\Temp"
+
+    $TSDownloadUrl = "https://pkgs.tailscale.com/stable/tailscale-setup-latest-amd64.msi"
+    $TSDownloadPath = "$workdir\tailscale-setup-latest.msi"
+    Invoke-WebRequest -Uri $TSDownloadUrl -OutFile $TSDownloadPath
+
+    if (-not (Test-Path $TSDownloadPath)) {
+        Write-Host "Downloading TS - Failed" -ForegroundColor Red
+        Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
+        $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+        exit
+    }
+
+    Write-Host "Downloading TS - OK" -ForegroundColor Green
+
+    Start-Process -FilePath "$workdir\tailscale-setup-latest.msi" -ArgumentList "-q" -Wait
+
+    Start-Sleep 5
+
+    # Try statement to check if TS is really installed
+    try {
+    (Get-Command "C:\Program Files\Tailscale\tailscale.exe" -ErrorAction Stop) *>$null
+        Write-Host "Installing TS - OK" -ForegroundColor Green
+    }
+    catch {
+        Write-Host "Installing TS - Failed" -ForegroundColor Red
+        Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
+        $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+        exit
+    }
+
 }
 
 ""
@@ -118,7 +126,7 @@ catch {
 # Start tailscale with authkey
 Start-Process "C:\Program Files\Tailscale\tailscale.exe" -ArgumentList "up", "--authkey", $tsAuthKey, "--unattended"
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 10
 
 try {
     # Ping the dc machine using Test-Connection cmdlet
@@ -186,6 +194,6 @@ else {
 Write-Host "Setup done :) - Restarting in 5 seconds..." -ForegroundColor Green
 Invoke-RestMethod ("https://pu.bpskozep.hu/deployment/discord-webhook + $newComputerName") -Headers @{"Authorization" = "Bearer $PUToken" }
 Start-Sleep 5
-# Restart-Computer -Force
+Restart-Computer -Force
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 exit
