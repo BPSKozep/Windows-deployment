@@ -101,7 +101,7 @@ Start-Sleep 15
 
 # Try statement to check if TS is really installed
 try {
-    (Get-Command tailscale -ErrorAction Stop) *>$null
+    (Get-Command "C:\Program Files\Tailscale\tailscale.exe" -ErrorAction Stop) *>$null
     Write-Host "Installing TS - OK" -ForegroundColor Green
 }
 catch {
