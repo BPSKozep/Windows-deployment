@@ -12,7 +12,7 @@
 $ErrorActionPreference = "Stop"
 
 # Wait until explorer.exe is running
-while (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) {
+while (-not (Get-Process -Name windeploy -ErrorAction SilentlyContinue)) {
     Start-Sleep -Seconds 1
 }
 
