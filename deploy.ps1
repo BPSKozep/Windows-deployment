@@ -115,7 +115,7 @@ Start-Sleep -Seconds 5
 
 try {
     # Ping the dc machine using Test-Connection cmdlet
-    Test-Connection -ComputerName "dc" -Count 1 -ErrorAction Stop
+    Test-Connection -ComputerName "dc" -Count 1 -ErrorAction Stop *>$null
 
     # If we get here, it means the ping was successful
     Write-Host "Connecting to TS - OK" -ForegroundColor Green
