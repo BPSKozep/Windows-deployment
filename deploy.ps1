@@ -11,7 +11,7 @@
 #  8: Join Active Directory and restart
 $ErrorActionPreference = "Stop"
 
-# Wait until explorer.exe is running
+
 while (Get-Process -Name windeploy -ErrorAction SilentlyContinue) {
     Start-Sleep -Seconds 1
 }
@@ -182,6 +182,7 @@ else {
 }
 
 Write-Host "Setup done :) - Restarting in 5 seconds..." -ForegroundColor Green
+Invoke-RestMethod ("https://pu.bpskozep.hu/deployment/discord-webhook + $newComputerName") -Headers @{"Authorization" = "Bearer $PUToken" }
 Start-Sleep 5
 # Restart-Computer -Force
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
