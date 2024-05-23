@@ -97,7 +97,7 @@ Write-Host "Downloading TS - OK" -ForegroundColor Green
 
 Start-Process -FilePath "$workdir\tailscale-setup-latest.msi" -ArgumentList "-q" -Wait
 
-Start-Sleep 5
+Start-Sleep 15
 
 # Try statement to check if TS is really installed
 try {
@@ -106,7 +106,7 @@ try {
 }
 catch {
     Write-Host "Installing TS - Failed" -ForegroundColor Red
-    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
+    Write-Host 'Trying again in 5 seconds' -ForegroundColor Red
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     exit
 }
