@@ -57,7 +57,7 @@ Write-Host "Tailscale Authkey - OK" -ForegroundColor Green
 
 
 # Match serial with bpsnumber from DC
-$bpsNumber = Invoke-RestMethod -Uri ("https://pu.bpskozep.hu/deployment/serial-to-bps/" + $serialNumber) -Headers @{"Authorization" = "Bearer $PUToken" }
+$bpsNumber = Invoke-RestMethod -Uri "https://pu.bpskozep.hu/deployment/serial-to-bps/$serialNumber" -Headers @{"Authorization" = "Bearer $PUToken" }
 Write-Host "BPS number - OK: $bpsNumber" -ForegroundColor Green
 
 # If serial returned nothing, fallback input
@@ -74,7 +74,7 @@ Write-Host "Computer name - OK: $newComputerName" -ForegroundColor Green
 ""
 
 #Send request to DC
-Invoke-RestMethod -Uri ("https://pu.bpskozep.hu/deployment/delete/" + $newComputerName) -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
+Invoke-RestMethod -Uri "https://pu.bpskozep.hu/deployment/delete/$newComputerName" -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
 
 try {
     (Get-Command "C:\Program Files\Tailscale\tailscale.exe" -ErrorAction Stop) *>$null
@@ -155,7 +155,7 @@ catch {
 ""
 
 $computerHostname = hostname
-Invoke-RestMethod -Uri ("https://pu.bpskozep.hu/deployment/change-ip/" + $computerHostname + "/" + $bpsNumber) -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
+Invoke-RestMethod -Uri ("https://pu.bpskozep.hu/deployment/change-ip/$computerHostname/$bpsNumber") -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
 $tailscaleIP = (Get-NetIPAddress -InterfaceAlias "Tailscale" | Where-Object { $_.AddressFamily -eq 'IPv4' }).IPAddress
 if ($tailscaleIP -eq "100.100.25.$bpsNumber") {
     Write-Host "Changing IP: 100.100.25.$bpsNumber - OK" -ForegroundColor Green
@@ -192,7 +192,7 @@ else {
 }
 
 Write-Host "Setup done :) - Restarting in 5 seconds..." -ForegroundColor Green
-Invoke-RestMethod ("https://pu.bpskozep.hu/deployment/discord-webhook + $newComputerName") -Headers @{"Authorization" = "Bearer $PUToken" }
+Invoke-RestMethod ("https://pu.bpskozep.hu/deployment/discord-webhook/$newComputerName") -Headers @{"Authorization" = "Bearer $PUToken" }
 Start-Sleep 5
 Restart-Computer -Force
 $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
