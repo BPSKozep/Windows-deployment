@@ -33,8 +33,8 @@ Start-Sleep 1
 $PUToken = Invoke-RestMethod "https://pu.bpskozep.hu/deployment/get-token/$serialNumber"
 if ($PUToken -ieq "you and token bad go away :(") {
     Write-Host "Wrong serial!" -ForegroundColor Red
-    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red;
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     exit
 
 }
@@ -80,8 +80,8 @@ Invoke-WebRequest -Uri $TSDownloadUrl -OutFile $TSDownloadPath
 
 if (-not (Test-Path $TSDownloadPath)) {
     Write-Host "Downloading TS - Failed" -ForegroundColor Red
-    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red;
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     exit
 }
 
@@ -98,8 +98,8 @@ try {
 }
 catch {
     Write-Host "Installing TS - Failed" -ForegroundColor Red
-    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red;
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     exit
 }
 
@@ -108,7 +108,6 @@ catch {
 ""
 
 # Start tailscale with authkey
-"Connecting to TS - ..."
 Start-Process "C:\Program Files\Tailscale\tailscale.exe" -ArgumentList "up", "--authkey", $tsAuthKey, "--unattended"
 
 Start-Sleep -Seconds 5
@@ -123,15 +122,15 @@ try {
 catch [System.Net.NetworkInformation.PingException] {
     # If we get here, it means there was an error with the ping
     Write-Host "Connecting to TS - Ping Failed" -ForegroundColor Red
-    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red;
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     exit
 }
 catch {
     # This catch block is for other types of exceptions that may occur during the ping process
     Write-Host "Connecting to TS - Failed" -ForegroundColor Yellow
-    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red;
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     exit
 }
 
@@ -139,15 +138,16 @@ catch {
 "--- Step 7: Change IP based on BPS number ---"
 ""
 
-Invoke-RestMethod -Uri ("https://pu.bpskozep.hu/deployment/change-ip/" + $newComputerName) -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
+$computerHostname = hostname
+Invoke-RestMethod -Uri ("https://pu.bpskozep.hu/deployment/change-ip/" + $computerHostname) -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
 $tailscaleIP = (Get-NetIPAddress -InterfaceAlias "Tailscale" | Where-Object { $_.AddressFamily -eq 'IPv4' }).IPAddress
 if ($tailscaleIP -eq "100.100.25.$bpsNumber") {
     Write-Host "Changing IP: 100.100.25.$bpsNumber - OK" -ForegroundColor Green
 }
 else {
     Write-Host "Changing IP - Failed" -ForegroundColor Red
-    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red;
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     exit
 }
 
@@ -170,13 +170,13 @@ if ((Get-WmiObject win32_computersystem).partofdomain -eq $true) {
 }
 else {
     Write-Host "Joining domain - Failed" -ForegroundColor Red
-    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red;
-    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     exit
 }
 
 Write-Host "Setup done :) - Restarting in 5 seconds..." -ForegroundColor Green
 Start-Sleep 5
 # Restart-Computer -Force
-$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
 exit
