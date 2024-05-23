@@ -11,13 +11,10 @@
 #  8: Join Active Directory and restart
 $ErrorActionPreference = "Stop"
 
-
-while (Get-Process -Name windeploy -ErrorAction SilentlyContinue) {
+while (-not (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\AutoLogonChecked" -PathType Container)) {
     Start-Sleep -Seconds 1
 }
-taskkill.exe /f /im explorer.exe
-Start-Sleep 3
-explorer.exe
+
 Start-Sleep -Seconds 10
 
 Write-Host "Welcome to BPS Post setup script V2 (Now with extensive color coding!)"  -ForegroundColor Magenta
