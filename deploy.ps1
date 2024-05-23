@@ -89,6 +89,8 @@ Write-Host "Downloading TS - OK" -ForegroundColor Green
 
 Start-Process -FilePath "$workdir\tailscale-setup-latest.msi" -ArgumentList "-q" -Wait
 
+Start-Sleep 5
+
 # Try statement to check if TS is really installed
 try {
     (Get-Command tailscale -ErrorAction Stop) *>$null
