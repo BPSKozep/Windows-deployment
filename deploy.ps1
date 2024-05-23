@@ -106,7 +106,7 @@ try {
 }
 catch {
     Write-Host "Installing TS - Failed" -ForegroundColor Red
-    Write-Host 'Trying again in 5 seconds' -ForegroundColor Red
+    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red
     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
     exit
 }
