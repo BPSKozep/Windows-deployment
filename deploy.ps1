@@ -10,6 +10,12 @@
 #  7: Change IP based on BPS number
 #  8: Join Active Directory and restart
 $ErrorActionPreference = "Stop"
+
+# Wait until explorer.exe is running
+while (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) {
+    Start-Sleep -Seconds 1
+}
+
 Write-Host "Welcome to BPS Post setup script V2 (Now with extensive color coding!)"  -ForegroundColor Magenta
 ""
 "--- Step 1: Start powerhell, check for admin rights ---"
