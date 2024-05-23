@@ -28,7 +28,7 @@ Write-Host "Admin rights - OK" -ForegroundColor Green
 #Get serial from BIOS
 $serialNumber = Get-WmiObject -Class Win32_BIOS | Select-Object -ExpandProperty SerialNumber
 Write-Host "Serial number - OK: $serialNumber" -ForegroundColor Green
-
+Start-Sleep 1
 # Powershell Universal token is lifetime
 $PUToken = Invoke-RestMethod "https://pu.bpskozep.hu/deployment/get-token/$serialNumber"
 if ($PUToken -ieq "you and token bad go away :(") {
