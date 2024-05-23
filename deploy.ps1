@@ -155,7 +155,7 @@ catch {
 ""
 
 $computerHostname = hostname
-Invoke-RestMethod -Uri ("https://pu.bpskozep.hu/deployment/change-ip/" + $computerHostname) -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
+Invoke-RestMethod -Uri ("https://pu.bpskozep.hu/deployment/change-ip/" + $computerHostname + "/" + $bpsNumber) -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
 $tailscaleIP = (Get-NetIPAddress -InterfaceAlias "Tailscale" | Where-Object { $_.AddressFamily -eq 'IPv4' }).IPAddress
 if ($tailscaleIP -eq "100.100.25.$bpsNumber") {
     Write-Host "Changing IP: 100.100.25.$bpsNumber - OK" -ForegroundColor Green
