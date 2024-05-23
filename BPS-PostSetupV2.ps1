@@ -25,6 +25,10 @@ Write-Host "Admin rights - OK" -ForegroundColor Green
 "--- Step 2: Request required tokens from DC ---"
 ""
 
+#Get serial from BIOS
+$serialNumber = Get-WmiObject -Class Win32_BIOS | Select-Object -ExpandProperty SerialNumber
+Write-Host "Serial number - OK: $serialNumber" -ForegroundColor Green
+
 # Powershell Universal token is lifetime
 $PUToken = Invoke-RestMethod "https://pu.bpskozep.hu/deployment/get-token/$serialNumber"
 if ($PUToken -ieq "you and token bad go away :(") {
@@ -43,9 +47,6 @@ Write-Host "Tailscale Authkey - OK" -ForegroundColor Green
 "--- Step 3: Get machine BPS number from serial number or fallback to input ---"
 ""
 
-#Get serial from BIOS
-$serialNumber = Get-WmiObject -Class Win32_BIOS | Select-Object -ExpandProperty SerialNumber
-Write-Host "Serial number - OK: $serialNumber" -ForegroundColor Green
 
 # Match serial with bpsnumber from DC
 $bpsNumber = Invoke-RestMethod -Uri ("https://pu.bpskozep.hu/deployment/serial-to-bps/" + $serialNumber) -Headers @{"Authorization" = "Bearer $PUToken" }
