@@ -27,6 +27,13 @@ Write-Host "Admin rights - OK" -ForegroundColor Green
 
 # Powershell Universal token is lifetime
 $PUToken = Invoke-RestMethod "https://pu.bpskozep.hu/deployment/get-token/$serialNumber"
+if ($PUToken -ieq "you and token bad go away :(") {
+    Write-Host "Wrong serial!" -ForegroundColor Red
+    Write-Host 'Run failed, press any key to exit' -ForegroundColor Red;
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+    exit
+
+}
 Write-Host "Powershell Universal - OK" -ForegroundColor Green
 # Tailscale token is requested from DC
 $tsAuthKey = Invoke-RestMethod -Uri "https://pu.bpskozep.hu/deployment/ts-auth/" -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
