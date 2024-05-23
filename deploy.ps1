@@ -11,6 +11,13 @@
 #  8: Join Active Directory and restart
 $ErrorActionPreference = "Stop"
 
+$SecondsRunning = 0
+Write-Host "Press any key to start the script" -ForegroundColor Blue
+while (-not ($Host.UI.RawUI.KeyAvailable) -and ($SecondsRunning -lt 60)) {
+    Start-Sleep 1
+    $SecondsRunning++
+}
+
 Write-Host "Welcome to BPS Post setup script V2 (Now with extensive color coding!)"  -ForegroundColor Magenta
 ""
 "--- Step 1: Start powerhell, check for admin rights ---"
