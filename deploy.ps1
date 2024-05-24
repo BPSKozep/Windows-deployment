@@ -13,7 +13,7 @@ $ErrorActionPreference = "Stop"
 
 $SecondsRunning = 0
 Write-Host "Press any key to start the script" -ForegroundColor Blue
-while (-not ($Host.UI.RawUI.KeyAvailable) -and ($SecondsRunning -lt 65)) {
+while (-not ($Host.UI.RawUI.KeyAvailable) -and ($SecondsRunning -lt 70)) {
     Start-Sleep 1
     $SecondsRunning++
 }
