@@ -49,7 +49,7 @@ try {
     }
     Write-Host "Powershell Universal - OK" -ForegroundColor Green
     # Tailscale token is requested from DC
-    $tsAuthKey = Invoke-RestMethod -Uri "https://pu.bpskozep.hu/deployment/ts-auth" -Method Post -Headers @{"Authorization" = "Bearer $PUToken" }
+    $tsAuthKey = Invoke-RestMethod -Uri "https://pu.bpskozep.hu/deployment/ts-auth" -Method Get -Headers @{"Authorization" = "Bearer $PUToken" }
     Write-Host "Tailscale Authkey - OK" -ForegroundColor Green
 
     ""
